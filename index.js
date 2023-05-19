@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json())
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cpvrkgd.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://animalToys:Oh3CP8qVOxbxgTrW@cluster0.cpvrkgd.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -24,28 +24,22 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const animalCollection = client.db('animalDB').collection('animal');
 
         // get single user data
-        app.get('/addToy', async(req, res)=>{
+        app.get('/allToy', async(req, res)=>{
             let query = {};
             if(req.query?.email){
                 query = {email: req.query.email}
             }
             const result = await animalCollection.find(query).toArray();
             res.send(result)
-        })
-
-        // get all data
-        app.get('/addToy', async(req, res)=>{            
-            const cursor = await animalCollection.find().toArray()
-            res.send()
-        })
+        })      
 
         // get a single data
-        app.get('/addToy/:id', async(req, res)=>{
+        app.get('/allToy/:id', async(req, res)=>{
             const id = req.params.id;
             const query = {_id : new ObjectId(id)}
             const result = await animalCollection.findOne(query)
@@ -55,6 +49,12 @@ async function run() {
         app.post('/addToy', async(req, res)=>{
             const body = req.body;
             const result = await animalCollection.insertOne(body)
+            res.send(result)
+        })
+        app.delete('/allToy/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id : new ObjectId(id)}
+            const result = await animalCollection.deleteOne(query)
             res.send(result)
         })
 
