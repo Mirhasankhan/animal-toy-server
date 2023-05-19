@@ -29,33 +29,51 @@ async function run() {
         const animalCollection = client.db('animalDB').collection('animal');
 
         // get single user data
-        app.get('/allToy', async(req, res)=>{
+        app.get('/allToy', async (req, res) => {
             let query = {};
-            if(req.query?.email){
-                query = {email: req.query.email}
+            if (req.query?.email) {
+                query = { email: req.query.email }
             }
             const result = await animalCollection.find(query).toArray();
             res.send(result)
-        })      
+        })
 
         // get a single data
-        app.get('/allToy/:id', async(req, res)=>{
+        app.get('/allToy/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id : new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await animalCollection.findOne(query)
             res.send(result)
         })
 
-        app.post('/addToy', async(req, res)=>{
+        app.post('/addToy', async (req, res) => {
             const body = req.body;
             const result = await animalCollection.insertOne(body)
             res.send(result)
         })
-        app.delete('/allToy/:id', async(req, res)=>{
+
+        app.delete('/allToy/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id : new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await animalCollection.deleteOne(query)
             res.send(result)
+        })
+
+        app.put('/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true };
+            const updatedToy = req.body;
+
+            const toy = {
+                $set: {
+                    name: updatedToy.name,
+                    quantity: updatedToy.quantity,                    
+                    photo: updatedToy.photo
+                }
+            }
+            const result = await animalCollection.updateOne(filter, toy, options);
+            res.send(result);
         })
 
         // Send a ping to confirm a successful connection
