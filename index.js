@@ -28,11 +28,23 @@ async function run() {
 
         const animalCollection = client.db('animalDB').collection('animal');
 
+        // get single user data
         app.get('/addToy', async(req, res)=>{
-            const result = await animalCollection.find().toArray();
+            let query = {};
+            if(req.query?.email){
+                query = {email: req.query.email}
+            }
+            const result = await animalCollection.find(query).toArray();
             res.send(result)
         })
 
+        // get all data
+        app.get('/addToy', async(req, res)=>{            
+            const cursor = await animalCollection.find().toArray()
+            res.send()
+        })
+
+        // get a single data
         app.get('/addToy/:id', async(req, res)=>{
             const id = req.params.id;
             const query = {_id : new ObjectId(id)}
