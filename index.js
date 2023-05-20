@@ -34,7 +34,7 @@ async function run() {
             if (req.query?.email) {
                 query = { email: req.query.email }
             }
-            const result = await animalCollection.find(query).toArray();
+            const result = await animalCollection.find(query).limit(8).toArray()
             res.send(result)
         })
 
@@ -59,17 +59,21 @@ async function run() {
             res.send(result)
         })
 
-        app.put('/update/:id', async (req, res) => {
+        app.put('/allToy/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const options = { upsert: true };
             const updatedToy = req.body;
-
+            
             const toy = {
                 $set: {
-                    name: updatedToy.name,
-                    quantity: updatedToy.quantity,                    
-                    photo: updatedToy.photo
+                    price: updatedToy.price,
+                    quantity: updatedToy.quantity,                  
+                    description: updatedToy.description  ,                  
+                    email: updatedToy.email,
+                    seller: updatedToy.seller,                  
+                    toy: updatedToy.toy,
+                    rating: updatedToy.rating                   
                 }
             }
             const result = await animalCollection.updateOne(filter, toy, options);
