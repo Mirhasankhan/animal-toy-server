@@ -27,18 +27,25 @@ async function run() {
         // await client.connect();
 
         const animalCollection = client.db('animalDB').collection('animal');
+        const imageCollection = client.db('galleryImage').collection('images')
 
-        // get single user data
+        app.get('/images', async(req, res)=>{
+            const result = await imageCollection.find().toArray()
+            res.send(result)
+        })
+       
+
+
+        // animal collection operations
         app.get('/allToy', async (req, res) => {
             let query = {};
             if (req.query?.email) {
                 query = { email: req.query.email }
             }
-            const result = await animalCollection.find(query).limit(8).toArray()
+            const result = await animalCollection.find(query).limit(20).sort({price: 1}).toArray()
             res.send(result)
         })
-
-        // get a single data
+       
         app.get('/allToy/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
